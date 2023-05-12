@@ -1,10 +1,30 @@
 import edu.macalester.graphics.CanvasWindow;
 
 public class Game {
-    public static void main(String[] args) {
-        CanvasWindow canvas = new CanvasWindow(null, 500, 500);
+    private String WINDOW_TITLE = "Dots and Boxes by SCC";
+    private int BOUNDARY_SPACE = 10;
+    private CanvasWindow canvas;
+
+    public Game(int numRows, int numColumns, int boxSize, int dotDiameter) {
+        // calculate canvas size based on 
+        // - number of rows and number of columns,
+        // - box size
+        // - dot diameter
+        int horizontalSpace = 2*BOUNDARY_SPACE;
+        int canvasWidth = numColumns*boxSize + dotDiameter + horizontalSpace;
+        int verticalSpace = 2*BOUNDARY_SPACE;
+        int canvasHeight = numRows*boxSize + dotDiameter + verticalSpace;
+
+        // create canvas with the calculated dimenstions
+        this.canvas = new CanvasWindow(WINDOW_TITLE, canvasWidth, canvasHeight);
         
-        Board b = new Board(3, 3, 100, 10);
-        canvas.add(b.getBoard(), 0, 0);
+        // ceate a board & add to canvas
+        Board b = new Board(numRows, numColumns, boxSize, dotDiameter);
+        this.canvas.add(b, BOUNDARY_SPACE, BOUNDARY_SPACE);
+    }
+
+
+    public static void main(String[] args) {
+        new Game(20, 20, 30, 10);
     }
 }
