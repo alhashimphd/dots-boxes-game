@@ -37,7 +37,7 @@ public class Board extends GraphicsGroup {
         this.addDots();
     }
 
-    public void highlightHover(Point mousePosition) {
+    public void highlightHoveredEdge(Point mousePosition) {
         GraphicsObject obj = this.getElementAt(mousePosition);
 
         if(obj instanceof Edge) {
@@ -49,12 +49,12 @@ public class Board extends GraphicsGroup {
         }
         else {
             if(this.currentlyHoveredEdge != null) {
-                this.currentlyHoveredEdge.unclicked();
+                this.currentlyHoveredEdge.setUnclickedColor();
             }
         }
     }
 
-    public void click(Point mousePosition, Color color) {
+    public void highlightClickedEdge(Point mousePosition, Color color) {
         GraphicsObject obj = this.getElementAt(mousePosition);
 
         if(!(obj instanceof Edge)) return;
@@ -117,7 +117,7 @@ public class Board extends GraphicsGroup {
         public Edge(double x, double y, double width, double height) {
             super(x, y, width, height);
             this.setFilled(true);
-            this.unclicked();
+            this.setUnclickedColor();
         }
 
         public boolean isClicked() {
@@ -127,7 +127,7 @@ public class Board extends GraphicsGroup {
             return false;
         }
 
-        public void unclicked() {
+        public void setUnclickedColor() {
             this.setColor(edgeColorWhenNotSelected);
         }
 

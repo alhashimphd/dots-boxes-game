@@ -32,11 +32,11 @@ public class Game {
         this.canvas.add(b, BOUNDARY_SPACE, BOUNDARY_SPACE);
 
         this.canvas.onMouseMove(e -> {
-            b.highlightHover(e.getPosition());
+            b.highlightHoveredEdge(e.getPosition());
         });
 
         this.canvas.onClick(e -> {
-            b.click(e.getPosition(), Color.ORANGE);
+            b.highlightClickedEdge(e.getPosition(), Color.ORANGE);
         });
     }
 
