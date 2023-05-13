@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Paint;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,16 +59,29 @@ public class Board extends GraphicsGroup {
         }
     }
 
-    public void highlightClickedEdge(Point mousePosition, Color color) {
+    public Edge highlightClickedEdge(Point mousePosition, Color color) {
         GraphicsObject obj = this.getElementAt(mousePosition);
 
-        if(!(obj instanceof Edge)) return;
+        if(!(obj instanceof Edge)) return null;
         
         Edge edge = (Edge) obj;
         if(edge.isHovered()) {
             edge.setColor(color);
             this.currentlyHoveredEdges.remove(edge);
             this.resetHoveredEdges();
+            highlightBox(edge);
+            return edge;
+        }
+
+        return null;
+    }
+
+    public void highlightBox(Edge justClickedEdge) {
+        if(justClickedEdge instanceof VerticalEdge) {
+
+        }
+        else if(justClickedEdge instanceof HorizontalEdge) {
+
         }
     }
 
@@ -123,8 +137,10 @@ public class Board extends GraphicsGroup {
     }
 
     abstract class Edge extends Rectangle {
-        private int row;
-        private int column;
+        private int row0;
+        private int column0;
+        private int row1;
+        private int column1;
 
         public Edge(double x, double y, double width, double height) {
             super(x, y, width, height);
@@ -133,7 +149,7 @@ public class Board extends GraphicsGroup {
         }
 
         public boolean isClicked() {
-            if(this.getFillColor() != edgeColorWhenNotSelected) {
+            if(this.getColor() != edgeColorWhenNotSelected) {
                 return true;
             }
             return false;
@@ -155,6 +171,15 @@ public class Board extends GraphicsGroup {
             this.setFillColor(color);
             this.setStrokeColor(color);
         }
+
+        public Paint getColor() {
+            return this.getFillColor();
+        }
+
+        @Override
+        public String toString() {
+            return "Edge from (" + row0 + "," + column0 +") to (" + row1 + "," + column1 + ")";
+        }
     }
 
     class HorizontalEdge extends Edge {
@@ -163,8 +188,11 @@ public class Board extends GraphicsGroup {
                   row*boxSize + dotDiameter/2 - edgeThickness/2, 
                   boxSize - dotDiameter, 
                   edgeThickness);
-            super.row = row;
-            super.column = column;
+            super.row0 = row;
+            super.column0 = column;
+            super.row1 = row;
+            super.column1 = column+1;
+
         }
     }
 
@@ -174,8 +202,10 @@ public class Board extends GraphicsGroup {
                   row*boxSize + dotDiameter, 
                   edgeThickness,
                   boxSize - dotDiameter);
-            super.row = row;
-            super.column = column;
+            super.row0 = row;
+            super.column0 = column;
+            super.row1 = row+1;
+            super.column1 = column;
         }
     }
 }

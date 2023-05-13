@@ -1,5 +1,4 @@
 import edu.macalester.graphics.CanvasWindow;
-import edu.macalester.graphics.GraphicsObject;
 import java.awt.Color;
 
 public class Game {
@@ -40,12 +39,15 @@ public class Game {
         });
 
         this.canvas.onMouseUp(e -> {
-            b.highlightClickedEdge(e.getPosition(), Color.BLUE);
+            Board.Edge edge = b.highlightClickedEdge(e.getPosition(), Color.BLUE);
+            if(edge != null) {
+                // TODO: do something
+            }
         });
     }
 
 
     public static void main(String[] args) {
-        new Game(15, 15, 50, 10, Color.LIGHT_GRAY, Color.RED, Color.DARK_GRAY, 5);
+        new Game(10, 10, 100, 20, Color.LIGHT_GRAY, Color.RED, Color.DARK_GRAY, 10);
     }
 }
