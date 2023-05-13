@@ -34,14 +34,18 @@ public class Game {
         this.canvas.onMouseMove(e -> {
             b.highlightHoveredEdge(e.getPosition());
         });
+        
+        this.canvas.onDrag(e -> {
+            b.highlightHoveredEdge(e.getPosition());
+        });
 
-        this.canvas.onClick(e -> {
+        this.canvas.onMouseUp(e -> {
             b.highlightClickedEdge(e.getPosition(), Color.BLUE);
         });
     }
 
 
     public static void main(String[] args) {
-        new Game(15, 15, 50, 10, Color.LIGHT_GRAY, Color.RED, Color.BLACK, 5);
+        new Game(15, 15, 50, 10, Color.LIGHT_GRAY, Color.RED, Color.DARK_GRAY, 5);
     }
 }

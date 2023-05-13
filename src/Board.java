@@ -75,7 +75,7 @@ public class Board extends GraphicsGroup {
         for(Edge e : this.currentlyHoveredEdges) {
             e.setUnclickedColor();
         }
-        this.currentlyHoveredEdges = new LinkedList<>();
+        this.currentlyHoveredEdges.clear();
     }
 
     public boolean isEdgeUnclicked(Edge edge) {
