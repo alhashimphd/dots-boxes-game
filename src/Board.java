@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.macalester.graphics.Ellipse;
 import edu.macalester.graphics.GraphicsGroup;
@@ -16,7 +18,7 @@ public class Board extends GraphicsGroup {
     private final Color dotColor;
     private final double edgeThickness;
 
-    private Edge currentlyHoveredEdge;
+    private List<Edge> currentlyHoveredEdges;
 
     public Board(int numRows, int numColumns, 
                  double boxSize, double dotDiameter,
@@ -31,6 +33,7 @@ public class Board extends GraphicsGroup {
         this.edgeColorWhenHover = edgeColorWhenHover;
         this.dotColor = dotColor;
         this.edgeThickness = edgeThinkness;
+        this.currentlyHoveredEdges = new LinkedList<>();
 
         this.addHorizontalEdges();
         this.addVerticalEdges();
@@ -44,12 +47,13 @@ public class Board extends GraphicsGroup {
             Edge edge = (Edge) obj;
             if(edge.isClicked()) return;
             if(edge.isHovered()) return;
+            this.resetHoveredEdges();
             edge.hovered();
-            this.currentlyHoveredEdge = edge;
+            this.currentlyHoveredEdges.add(edge);
         }
         else {
-            if(this.currentlyHoveredEdge != null) {
-                this.currentlyHoveredEdge.setUnclickedColor();
+            if(this.currentlyHoveredEdges != null) {
+                this.resetHoveredEdges();
             }
         }
     }
@@ -62,8 +66,16 @@ public class Board extends GraphicsGroup {
         Edge edge = (Edge) obj;
         if(edge.isHovered()) {
             edge.setColor(color);
-            this.currentlyHoveredEdge = null;
+            this.currentlyHoveredEdges.remove(edge);
+            this.resetHoveredEdges();
         }
+    }
+
+    private void resetHoveredEdges() {
+        for(Edge e : this.currentlyHoveredEdges) {
+            e.setUnclickedColor();
+        }
+        this.currentlyHoveredEdges = new LinkedList<>();
     }
 
     public boolean isEdgeUnclicked(Edge edge) {
