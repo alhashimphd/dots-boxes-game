@@ -8,7 +8,10 @@ public class Game {
     private CanvasWindow canvas;
     private Board b;
 
-    public Game(int numRows, int numColumns, int boxSize, int dotDiameter) {
+    public Game(int numRows, int numColumns, int boxSize, int dotDiameter, 
+                Color edgeColorWhenNotSelected, Color edgeColorWhenHover,
+                Color dotColor,
+                double edgeThinkness) {
         // calculate canvas size based on 
         // - number of rows and number of columns,
         // - box size
@@ -22,24 +25,23 @@ public class Game {
         this.canvas = new CanvasWindow(WINDOW_TITLE, canvasWidth, canvasHeight);
         
         // ceate a board & add to canvas
-        b = new Board(numRows, numColumns, boxSize, dotDiameter);
+        b = new Board(numRows, numColumns, boxSize, dotDiameter,
+                        edgeColorWhenNotSelected, edgeColorWhenHover,
+                        dotColor,
+                        edgeThinkness);
         this.canvas.add(b, BOUNDARY_SPACE, BOUNDARY_SPACE);
 
         this.canvas.onMouseMove(e -> {
-            GraphicsObject obj = b.getElementAt(e.getPosition());
-            if(obj != null) {
-                if(obj instanceof Board.Edge) {
-                    Board.Edge edge = (Board.Edge) obj;
-                    if(!edge.isClicked()) {
-                        edge.hovered();
-                    }
-                }
-            }
+            b.highlightHover(e.getPosition());
+        });
+
+        this.canvas.onClick(e -> {
+            b.click(e.getPosition(), Color.ORANGE);
         });
     }
 
 
     public static void main(String[] args) {
-        new Game(10, 10, 50, 10);
+        new Game(10, 10, 50, 10, Color.LIGHT_GRAY, Color.RED, Color.BLACK, 4);
     }
 }
