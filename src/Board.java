@@ -19,6 +19,8 @@ public class Board extends GraphicsGroup {
     private final Color dotColor;
     private final double edgeThickness;
 
+    private final HorizontalEdge[][] horizontalEdges;
+    private final VerticalEdge[][] verticalEdges;
     private List<Edge> currentlyHoveredEdges;
 
     public Board(int numRows, int numColumns, 
@@ -34,6 +36,9 @@ public class Board extends GraphicsGroup {
         this.edgeColorWhenHover = edgeColorWhenHover;
         this.dotColor = dotColor;
         this.edgeThickness = edgeThinkness;
+
+        this.horizontalEdges = new HorizontalEdge[numRows+1][numColumns+1];
+        this.verticalEdges = new VerticalEdge[numRows+1][numColumns+1];
         this.currentlyHoveredEdges = new LinkedList<>();
 
         this.addHorizontalEdges();
@@ -78,9 +83,21 @@ public class Board extends GraphicsGroup {
 
     public void highlightBox(Edge justClickedEdge) {
         if(justClickedEdge instanceof VerticalEdge) {
+            // check box on right
+            if(this.verticalEdges[justClickedEdge.row0][justClickedEdge.column0+1].isClicked() &&
+            this.horizontalEdges[justClickedEdge.row0][justClickedEdge.column0].isClicked() &&
+            this.horizontalEdges[justClickedEdge.row0+1][justClickedEdge.column0].isClicked()) {
+                Box box = new Box(justClickedEdge.row0, justClickedEdge.column0);
+                this.add(box);
+            }
 
+            // check box on the left
         }
         else if(justClickedEdge instanceof HorizontalEdge) {
+            // check box on top
+
+
+            // check box on bottom
 
         }
     }
@@ -110,6 +127,8 @@ public class Board extends GraphicsGroup {
             for(int col=0; col<this.numColumns; col++) {
                 HorizontalEdge horizontalEdge = new HorizontalEdge(row, col);
                 this.add(horizontalEdge);
+
+                this.horizontalEdges[row][col] = horizontalEdge;
             }
         }
     }
@@ -119,6 +138,8 @@ public class Board extends GraphicsGroup {
             for(int row=0; row<this.numRows; row++) {
                 VerticalEdge verticalEdge = new VerticalEdge(row, col);
                 this.add(verticalEdge);
+
+                this.verticalEdges[row][col] = verticalEdge;
             }
         }
     }
@@ -136,11 +157,17 @@ public class Board extends GraphicsGroup {
         }
     }
 
+    class Box extends Rectangle {
+        public Box(int row, int column) {
+            super(column*boxSize+ dotDiameter/2, row*boxSize + dotDiameter/2, boxSize, boxSize);
+        }
+    }
+
     abstract class Edge extends Rectangle {
         private int row0;
         private int column0;
-        private int row1;
-        private int column1;
+        // private int row1;
+        // private int column1;
 
         public Edge(double x, double y, double width, double height) {
             super(x, y, width, height);
@@ -178,7 +205,15 @@ public class Board extends GraphicsGroup {
 
         @Override
         public String toString() {
-            return "Edge from (" + row0 + "," + column0 +") to (" + row1 + "," + column1 + ")";
+            String msg = "";
+            if(this instanceof VerticalEdge) {
+                msg = "Vertical";
+            }
+            else if(this instanceof HorizontalEdge) {
+                msg = "Horizontal";
+            }
+
+            return msg + " edge stars at (" + row0 + "," + column0 +")";
         }
     }
 
@@ -190,8 +225,8 @@ public class Board extends GraphicsGroup {
                   edgeThickness);
             super.row0 = row;
             super.column0 = column;
-            super.row1 = row;
-            super.column1 = column+1;
+            // super.row1 = row;
+            // super.column1 = column+1;
 
         }
     }
@@ -204,8 +239,8 @@ public class Board extends GraphicsGroup {
                   boxSize - dotDiameter);
             super.row0 = row;
             super.column0 = column;
-            super.row1 = row+1;
-            super.column1 = column;
+            // super.row1 = row+1;
+            // super.column1 = column;
         }
     }
 }
