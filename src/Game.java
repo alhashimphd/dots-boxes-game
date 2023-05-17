@@ -31,15 +31,15 @@ public class Game {
         this.canvas.add(b, BOUNDARY_SPACE, BOUNDARY_SPACE);
 
         this.canvas.onMouseMove(e -> {
-            b.highlightHoveredEdge(e.getPosition());
+            b.highlightIfHoveredEdge(e.getPosition());
         });
         
         this.canvas.onDrag(e -> {
-            b.highlightHoveredEdge(e.getPosition());
+            b.highlightIfHoveredEdge(e.getPosition());
         });
 
         this.canvas.onMouseUp(e -> {
-            Board.Edge edge = b.highlightClickedEdge(e.getPosition(), Color.BLUE);
+            Board.Edge edge = b.highlightIfClickedEdge(e.getPosition(), Color.BLUE);
             if(edge != null) {
                 // TODO: do something
             }

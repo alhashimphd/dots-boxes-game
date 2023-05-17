@@ -46,7 +46,7 @@ public class Board extends GraphicsGroup {
         this.addDots();
     }
 
-    public void highlightHoveredEdge(Point mousePosition) {
+    public void highlightIfHoveredEdge(Point mousePosition) {
         GraphicsObject obj = this.getElementAt(mousePosition);
 
         if(obj instanceof Edge) {
@@ -64,7 +64,7 @@ public class Board extends GraphicsGroup {
         }
     }
 
-    public Edge highlightClickedEdge(Point mousePosition, Color color) {
+    public Edge highlightIfClickedEdge(Point mousePosition, Color color) {
         GraphicsObject obj = this.getElementAt(mousePosition);
 
         if(!(obj instanceof Edge)) return null;
@@ -74,31 +74,48 @@ public class Board extends GraphicsGroup {
             edge.setColor(color);
             this.currentlyHoveredEdges.remove(edge);
             this.resetHoveredEdges();
-            highlightBox(edge);
+            highlightBoxIf(edge, color);
             return edge;
         }
 
         return null;
     }
 
-    public void highlightBox(Edge justClickedEdge) {
+    public void highlightBoxIf(Edge justClickedEdge, Color color) {
+        int col = justClickedEdge.column0;
+        int row = justClickedEdge.row0;
+
         if(justClickedEdge instanceof VerticalEdge) {
-            // check box on right
-            if(this.verticalEdges[justClickedEdge.row0][justClickedEdge.column0+1].isClicked() &&
-            this.horizontalEdges[justClickedEdge.row0][justClickedEdge.column0].isClicked() &&
-            this.horizontalEdges[justClickedEdge.row0+1][justClickedEdge.column0].isClicked()) {
-                Box box = new Box(justClickedEdge.row0, justClickedEdge.column0);
-                this.add(box);
+            // check box on left
+            if(col < numColumns) {
+                highlightBoxIf(col, row, color);
             }
 
-            // check box on the left
+            // check box on right
+            if(col > 0) {
+                highlightBoxIf(col-1, row, color);
+            }
         }
         else if(justClickedEdge instanceof HorizontalEdge) {
             // check box on top
-
+            if(row > 0) {
+                highlightBoxIf(col, row-1, color);
+            }
 
             // check box on bottom
+            if(row < numRows) {
+                highlightBoxIf(col, row, color);
+            }
+        }
+    }
 
+    private void highlightBoxIf(int column, int row, Color color) {
+        if(this.verticalEdges[row][column].isClicked() &&
+            this.verticalEdges[row][column+1].isClicked() &&
+            this.horizontalEdges[row][column].isClicked() &&
+            this.horizontalEdges[row+1][column].isClicked()) {
+            Box box = new Box(row, column, color);
+            this.add(box);
         }
     }
 
@@ -158,8 +175,15 @@ public class Board extends GraphicsGroup {
     }
 
     class Box extends Rectangle {
-        public Box(int row, int column) {
+        public Box(int row, int column, Color color) {
             super(column*boxSize+ dotDiameter/2, row*boxSize + dotDiameter/2, boxSize, boxSize);
+            this.setFilled(true);
+            this.setColor(color);
+        }
+
+        public void setColor(Color color) {
+            this.setFillColor(color);
+            this.setStrokeColor(color);
         }
     }
 
