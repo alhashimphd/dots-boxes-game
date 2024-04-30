@@ -1,7 +1,7 @@
 # Dots and Boxes Game
 
-An attempt to develop the traditional [dots and boxes game](https://en.wikipedia.org/wiki/Dots_and_boxes) for my kids.
+Java implementation of the [dots and boxes game](https://en.wikipedia.org/wiki/Dots_and_boxes).
 
-## The Game in Action
+## Links
 
-- Thomas S. Ferguson, UCLA Math Professor [Web Implementaiton](https://www.math.ucla.edu/~tom/Games/dots&boxes.h10tml)
+- [Web implementaiton of the game by Thomas S. Ferguson, UCLA Math Professor](https://www.math.ucla.edu/~tom/Games/dots&boxes.h10tml)
