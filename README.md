@@ -4,4 +4,4 @@ Java implementation of the [dots and boxes game](https://en.wikipedia.org/wiki/D
 
 ## Links
 
-- [Web implementaiton of the game by Thomas S. Ferguson, UCLA Math Professor](https://www.math.ucla.edu/~tom/Games/dots&boxes.h10tml)
+- [Play against the comoputer](https://www.math.ucla.edu/~tom/Games/dots&boxes.h10tml)--implementation by by Thomas S. Ferguson, UCLA Math Professor
