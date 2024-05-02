@@ -5,7 +5,7 @@ public class Game {
     private String WINDOW_TITLE = "Dots and Boxes by SCC";
     private int BOUNDARY_SPACE = 10;
     private CanvasWindow canvas;
-    private Board b;
+    private BoardGUI b;
 
     public Game(int numRows, int numColumns, int boxSize, int dotDiameter, 
                 Color edgeColorWhenNotSelected, Color edgeColorWhenHover,
@@ -24,7 +24,7 @@ public class Game {
         this.canvas = new CanvasWindow(WINDOW_TITLE, canvasWidth, canvasHeight);
         
         // ceate a board & add to canvas
-        b = new Board(numRows, numColumns, boxSize, dotDiameter,
+        b = new BoardGUI(numRows, numColumns, boxSize, dotDiameter,
                         edgeColorWhenNotSelected, edgeColorWhenHover,
                         dotColor,
                         edgeThinkness);
@@ -39,7 +39,7 @@ public class Game {
         });
 
         this.canvas.onMouseUp(e -> {
-            Board.Edge edge = b.highlightIfClickedEdge(e.getPosition(), Color.BLUE);
+            BoardGUI.Edge edge = b.highlightIfClickedEdge(e.getPosition(), Color.BLUE);
             if(edge != null) {
                 // TODO: do something
             }
