@@ -42,6 +42,6 @@ public class Game {
 
 
     public static void main(String[] args) {
-        new Game(10, 10, 100, 20, Color.LIGHT_GRAY, Color.RED, Color.DARK_GRAY, 10);
+        new Game(10, 10, 100, 20, Color.LIGHT_GRAY, Color.RED, Color.DARK_GRAY, .3);
     }
 }

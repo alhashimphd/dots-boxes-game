@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import edu.macalester.graphics.Ellipse;
 import edu.macalester.graphics.GraphicsGroup;
@@ -19,15 +21,19 @@ public class BoardGUI extends GraphicsGroup {
     private final Color dotColor;
     private final double linkThickness;
 
-    private final HorizontalEdge[][] horizontalLinks;
-    private final VerticalEdge[][] verticalLinks;
+    private final Board board;
     private List<Edge> currentlyHoveredLinks;
+
+    private GraphicsGroup dots = new GraphicsGroup();
+    private GraphicsGroup edges = new GraphicsGroup();
+    private GraphicsGroup boxes = new GraphicsGroup();
+    
 
     public BoardGUI(int rows, int cols, 
                  double boxSize, double dotDiameter,
                  Color linkColorWhenNotSelected, Color linkColorWhenHover,
                  Color dotColor,
-                 double linkThinkness) {
+                 double linkThinknessPropotionalToDotDiameter) {
         this.rows = rows;
         this.cols = cols;
         this.boxSize = boxSize;
@@ -35,16 +41,41 @@ public class BoardGUI extends GraphicsGroup {
         this.linkColorWhenNotSelected = linkColorWhenNotSelected;
         this.linkColorWhenHover = linkColorWhenHover;
         this.dotColor = dotColor;
-        this.linkThickness = linkThinkness;
+        this.linkThickness = dotDiameter*linkThinknessPropotionalToDotDiameter;
 
-        this.horizontalLinks = new HorizontalEdge[rows+1][cols+1];
-        this.verticalLinks = new VerticalEdge[rows+1][cols+1];
+        this.board = new Board(rows, cols);
         this.currentlyHoveredLinks = new LinkedList<>();
+
+        this.add(boxes);
+        this.add(edges);
+        this.add(dots);
 
         this.addHorizontalEdges();
         this.addVerticalEdges();
         this.addDots();
     }
+
+
+    private void addHorizontalEdges() {
+        for(int row=0; row<=this.rows; row++)
+            for(int col=0; col<this.cols; col++)
+                edges.add(new HorizontalEdge(row, col));
+    }
+
+
+    private void addVerticalEdges() {
+        for(int col=0; col<=this.cols; col++)
+            for(int row=0; row<this.rows; row++)
+                edges.add(new VerticalEdge(row, col));
+    }
+
+
+    private void addDots() {
+        for(int row=0; row<=this.rows; row++)
+            for(int col=0; col<=this.cols; col++)
+                dots.add(new Dot(row, col));
+    }
+
 
     public void highlightIfHoveredEdge(Point mousePosition) {
         GraphicsObject obj = this.getElementAt(mousePosition);
@@ -85,37 +116,16 @@ public class BoardGUI extends GraphicsGroup {
         int col = justClickedEdge.column0;
         int row = justClickedEdge.row0;
 
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         if(justClickedEdge instanceof VerticalEdge) {
-            // check box on left
-            if(col < cols) {
-                highlightBoxIf(col, row, color);
-            }
-
-            // check box on right
-            if(col > 0) {
-                highlightBoxIf(col-1, row, color);
-            }
+            labelledBoxes = board.addVerticalLine(col, row, color.toString());
         }
         else if(justClickedEdge instanceof HorizontalEdge) {
-            // check box on top
-            if(row > 0) {
-                highlightBoxIf(col, row-1, color);
-            }
-
-            // check box on bottom
-            if(row < rows) {
-                highlightBoxIf(col, row, color);
-            }
+            labelledBoxes = board.addHorizontalLine(col, row, color.toString());
         }
-    }
 
-    private void highlightBoxIf(int column, int row, Color color) {
-        if(this.verticalLinks[row][column].isClicked() &&
-            this.verticalLinks[row][column+1].isClicked() &&
-            this.horizontalLinks[row][column].isClicked() &&
-            this.horizontalLinks[row+1][column].isClicked()) {
-            Box box = new Box(row, column, color);
-            this.add(box);
+        for(BoxPos boxPos : labelledBoxes) {
+            boxes.add(new Box(boxPos.topLeftX, boxPos.topLeftY, color));
         }
     }
 
@@ -128,37 +138,6 @@ public class BoardGUI extends GraphicsGroup {
 
     public boolean isEdgeUnclicked(Edge edge) {
         return edge.getFillColor() == this.linkColorWhenNotSelected;
-    }
-
-    private void addDots() {
-        for(int row=0; row<=this.rows; row++) {
-            for(int col=0; col<=this.cols; col++) {
-                Dot dot = new Dot(row, col);
-                this.add(dot);
-            }
-        }
-    }
-
-    private void addHorizontalEdges() {
-        for(int row=0; row<=this.rows; row++) {
-            for(int col=0; col<this.cols; col++) {
-                HorizontalEdge horizontalEdge = new HorizontalEdge(row, col);
-                this.add(horizontalEdge);
-
-                this.horizontalLinks[row][col] = horizontalEdge;
-            }
-        }
-    }
-
-    private void addVerticalEdges() {
-        for(int col=0; col<=this.cols; col++) {
-            for(int row=0; row<this.rows; row++) {
-                VerticalEdge verticalEdge = new VerticalEdge(row, col);
-                this.add(verticalEdge);
-
-                this.verticalLinks[row][col] = verticalEdge;
-            }
-        }
     }
 
     class Dot extends Ellipse {
@@ -175,8 +154,8 @@ public class BoardGUI extends GraphicsGroup {
     }
 
     class Box extends Rectangle {
-        public Box(int row, int column, Color color) {
-            super(column*boxSize+ dotDiameter/2, row*boxSize + dotDiameter/2, boxSize, boxSize);
+        public Box(int column, int row, Color color) {
+            super(column*boxSize + dotDiameter/2, row*boxSize + dotDiameter/2, boxSize, boxSize);
             this.setFilled(true);
             this.setColor(color);
         }
@@ -190,8 +169,6 @@ public class BoardGUI extends GraphicsGroup {
     abstract class Edge extends Rectangle {
         private int row0;
         private int column0;
-        // private int row1;
-        // private int column1;
 
         public Edge(double x, double y, double width, double height) {
             super(x, y, width, height);
@@ -249,9 +226,6 @@ public class BoardGUI extends GraphicsGroup {
                   linkThickness);
             super.row0 = row;
             super.column0 = column;
-            // super.row1 = row;
-            // super.column1 = column+1;
-
         }
     }
 
@@ -263,8 +237,6 @@ public class BoardGUI extends GraphicsGroup {
                   boxSize - dotDiameter);
             super.row0 = row;
             super.column0 = column;
-            // super.row1 = row+1;
-            // super.column1 = column;
         }
     }
 }
