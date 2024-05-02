@@ -30,10 +30,10 @@ public class Game {
                         linkThinkness);
         canvas.add(b, BOUNDARY_SPACE, BOUNDARY_SPACE);
 
-        canvas.onMouseMove(e -> b.highlightIfHoveredEdge(e.getPosition()));
-        canvas.onDrag(e -> b.highlightIfHoveredEdge(e.getPosition()));
+        canvas.onMouseMove(e -> b.onHoverEdge(e.getPosition()));
+        canvas.onDrag(e -> b.onHoverEdge(e.getPosition()));
         canvas.onMouseUp(e -> {
-            BoardGUI.Edge edge = b.highlightIfClickedEdge(e.getPosition(), Color.BLUE);
+            BoardGUI.Edge edge = b.onClickEdge(e.getPosition(), Color.BLUE);
             if(edge != null) {
                 // TODO: do something
             }

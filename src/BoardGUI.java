@@ -12,8 +12,6 @@ import edu.macalester.graphics.Point;
 import edu.macalester.graphics.Rectangle; 
 
 public class BoardGUI extends GraphicsGroup {
-    private final int rows;
-    private final int cols;
     private final double boxSize;
     private final double dotDiameter;
     private final Color linkColorWhenNotSelected;
@@ -21,12 +19,12 @@ public class BoardGUI extends GraphicsGroup {
     private final Color dotColor;
     private final double linkThickness;
 
+    private final GraphicsGroup dots = new GraphicsGroup();
+    private final GraphicsGroup edges = new GraphicsGroup();
+    private final GraphicsGroup boxes = new GraphicsGroup();
     private final Board board;
     private List<Edge> currentlyHoveredLinks;
 
-    private GraphicsGroup dots = new GraphicsGroup();
-    private GraphicsGroup edges = new GraphicsGroup();
-    private GraphicsGroup boxes = new GraphicsGroup();
     
 
     public BoardGUI(int rows, int cols, 
@@ -34,8 +32,6 @@ public class BoardGUI extends GraphicsGroup {
                  Color linkColorWhenNotSelected, Color linkColorWhenHover,
                  Color dotColor,
                  double linkThinknessPropotionalToDotDiameter) {
-        this.rows = rows;
-        this.cols = cols;
         this.boxSize = boxSize;
         this.dotDiameter = dotDiameter;
         this.linkColorWhenNotSelected = linkColorWhenNotSelected;
@@ -43,76 +39,73 @@ public class BoardGUI extends GraphicsGroup {
         this.dotColor = dotColor;
         this.linkThickness = dotDiameter*linkThinknessPropotionalToDotDiameter;
 
-        this.board = new Board(rows, cols);
-        this.currentlyHoveredLinks = new LinkedList<>();
+        add(boxes);
+        add(edges);
+        add(dots);
+        board = new Board(rows, cols);
+        currentlyHoveredLinks = new LinkedList<>();
 
-        this.add(boxes);
-        this.add(edges);
-        this.add(dots);
-
-        this.addHorizontalEdges();
-        this.addVerticalEdges();
-        this.addDots();
+        addHorizontalEdges();
+        addVerticalEdges();
+        addDots();
     }
 
 
     private void addHorizontalEdges() {
-        for(int row=0; row<=this.rows; row++)
-            for(int col=0; col<this.cols; col++)
+        for(int row=0; row<=board.getNumRows(); row++)
+            for(int col=0; col<board.getNumCols(); col++)
                 edges.add(new HorizontalEdge(row, col));
     }
 
 
     private void addVerticalEdges() {
-        for(int col=0; col<=this.cols; col++)
-            for(int row=0; row<this.rows; row++)
+        for(int col=0; col<=board.getNumCols(); col++)
+            for(int row=0; row<board.getNumRows(); row++)
                 edges.add(new VerticalEdge(row, col));
     }
 
 
     private void addDots() {
-        for(int row=0; row<=this.rows; row++)
-            for(int col=0; col<=this.cols; col++)
+        for(int row=0; row<=board.getNumRows(); row++)
+            for(int col=0; col<=board.getNumCols(); col++)
                 dots.add(new Dot(row, col));
     }
 
 
-    public void highlightIfHoveredEdge(Point mousePosition) {
-        GraphicsObject obj = this.getElementAt(mousePosition);
+    public void onHoverEdge(Point mousePosition) {
+        GraphicsObject obj = getElementAt(mousePosition);
 
         if(obj instanceof Edge) {
             Edge edge = (Edge) obj;
             if(edge.isClicked()) return;
             if(edge.isHovered()) return;
-            this.resetHoveredEdges();
+            resetHoveredEdges();
             edge.hovered();
-            this.currentlyHoveredLinks.add(edge);
+            currentlyHoveredLinks.add(edge);
+            return;
         }
-        else {
-            if(this.currentlyHoveredLinks != null) {
-                this.resetHoveredEdges();
-            }
-        }
+
+        resetHoveredEdges();
     }
 
-    public Edge highlightIfClickedEdge(Point mousePosition, Color color) {
-        GraphicsObject obj = this.getElementAt(mousePosition);
+    public Edge onClickEdge(Point mousePosition, Color color) {
+        GraphicsObject obj = getElementAt(mousePosition);
 
         if(!(obj instanceof Edge)) return null;
         
         Edge edge = (Edge) obj;
         if(edge.isHovered()) {
             edge.setColor(color);
-            this.currentlyHoveredLinks.remove(edge);
-            this.resetHoveredEdges();
-            highlightBoxIf(edge, color);
+            currentlyHoveredLinks.remove(edge);
+            resetHoveredEdges();
+            addBoxesIf(edge, color);
             return edge;
         }
 
         return null;
     }
 
-    public void highlightBoxIf(Edge justClickedEdge, Color color) {
+    public void addBoxesIf(Edge justClickedEdge, Color color) {
         int col = justClickedEdge.column0;
         int row = justClickedEdge.row0;
 
@@ -130,8 +123,8 @@ public class BoardGUI extends GraphicsGroup {
     }
 
     private void resetHoveredEdges() {
-        for(Edge e : this.currentlyHoveredLinks) {
-            e.setUnclickedColor();
+        for(Edge e : currentlyHoveredLinks) {
+            e.changeToUnclickedColor();
         }
         this.currentlyHoveredLinks.clear();
     }
@@ -173,7 +166,7 @@ public class BoardGUI extends GraphicsGroup {
         public Edge(double x, double y, double width, double height) {
             super(x, y, width, height);
             this.setFilled(true);
-            this.setUnclickedColor();
+            this.changeToUnclickedColor();
         }
 
         public boolean isClicked() {
@@ -183,7 +176,7 @@ public class BoardGUI extends GraphicsGroup {
             return false;
         }
 
-        public void setUnclickedColor() {
+        public void changeToUnclickedColor() {
             this.setColor(linkColorWhenNotSelected);
         }
 
