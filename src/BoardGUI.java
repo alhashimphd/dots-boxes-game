@@ -10,36 +10,36 @@ import edu.macalester.graphics.Point;
 import edu.macalester.graphics.Rectangle; 
 
 public class BoardGUI extends GraphicsGroup {
-    private final int numRows;
-    private final int numColumns;
+    private final int rows;
+    private final int cols;
     private final double boxSize;
     private final double dotDiameter;
-    private final Color edgeColorWhenNotSelected;
-    private final Color edgeColorWhenHover;
+    private final Color linkColorWhenNotSelected;
+    private final Color linkColorWhenHover;
     private final Color dotColor;
-    private final double edgeThickness;
+    private final double linkThickness;
 
-    private final HorizontalEdge[][] horizontalEdges;
-    private final VerticalEdge[][] verticalEdges;
-    private List<Edge> currentlyHoveredEdges;
+    private final HorizontalEdge[][] horizontalLinks;
+    private final VerticalEdge[][] verticalLinks;
+    private List<Edge> currentlyHoveredLinks;
 
-    public BoardGUI(int numRows, int numColumns, 
+    public BoardGUI(int rows, int cols, 
                  double boxSize, double dotDiameter,
-                 Color edgeColorWhenNotSelected, Color edgeColorWhenHover,
+                 Color linkColorWhenNotSelected, Color linkColorWhenHover,
                  Color dotColor,
-                 double edgeThinkness) {
-        this.numRows = numRows;
-        this.numColumns = numColumns;
+                 double linkThinkness) {
+        this.rows = rows;
+        this.cols = cols;
         this.boxSize = boxSize;
         this.dotDiameter = dotDiameter;
-        this.edgeColorWhenNotSelected = edgeColorWhenNotSelected;
-        this.edgeColorWhenHover = edgeColorWhenHover;
+        this.linkColorWhenNotSelected = linkColorWhenNotSelected;
+        this.linkColorWhenHover = linkColorWhenHover;
         this.dotColor = dotColor;
-        this.edgeThickness = edgeThinkness;
+        this.linkThickness = linkThinkness;
 
-        this.horizontalEdges = new HorizontalEdge[numRows+1][numColumns+1];
-        this.verticalEdges = new VerticalEdge[numRows+1][numColumns+1];
-        this.currentlyHoveredEdges = new LinkedList<>();
+        this.horizontalLinks = new HorizontalEdge[rows+1][cols+1];
+        this.verticalLinks = new VerticalEdge[rows+1][cols+1];
+        this.currentlyHoveredLinks = new LinkedList<>();
 
         this.addHorizontalEdges();
         this.addVerticalEdges();
@@ -55,10 +55,10 @@ public class BoardGUI extends GraphicsGroup {
             if(edge.isHovered()) return;
             this.resetHoveredEdges();
             edge.hovered();
-            this.currentlyHoveredEdges.add(edge);
+            this.currentlyHoveredLinks.add(edge);
         }
         else {
-            if(this.currentlyHoveredEdges != null) {
+            if(this.currentlyHoveredLinks != null) {
                 this.resetHoveredEdges();
             }
         }
@@ -72,7 +72,7 @@ public class BoardGUI extends GraphicsGroup {
         Edge edge = (Edge) obj;
         if(edge.isHovered()) {
             edge.setColor(color);
-            this.currentlyHoveredEdges.remove(edge);
+            this.currentlyHoveredLinks.remove(edge);
             this.resetHoveredEdges();
             highlightBoxIf(edge, color);
             return edge;
@@ -87,7 +87,7 @@ public class BoardGUI extends GraphicsGroup {
 
         if(justClickedEdge instanceof VerticalEdge) {
             // check box on left
-            if(col < numColumns) {
+            if(col < cols) {
                 highlightBoxIf(col, row, color);
             }
 
@@ -103,36 +103,36 @@ public class BoardGUI extends GraphicsGroup {
             }
 
             // check box on bottom
-            if(row < numRows) {
+            if(row < rows) {
                 highlightBoxIf(col, row, color);
             }
         }
     }
 
     private void highlightBoxIf(int column, int row, Color color) {
-        if(this.verticalEdges[row][column].isClicked() &&
-            this.verticalEdges[row][column+1].isClicked() &&
-            this.horizontalEdges[row][column].isClicked() &&
-            this.horizontalEdges[row+1][column].isClicked()) {
+        if(this.verticalLinks[row][column].isClicked() &&
+            this.verticalLinks[row][column+1].isClicked() &&
+            this.horizontalLinks[row][column].isClicked() &&
+            this.horizontalLinks[row+1][column].isClicked()) {
             Box box = new Box(row, column, color);
             this.add(box);
         }
     }
 
     private void resetHoveredEdges() {
-        for(Edge e : this.currentlyHoveredEdges) {
+        for(Edge e : this.currentlyHoveredLinks) {
             e.setUnclickedColor();
         }
-        this.currentlyHoveredEdges.clear();
+        this.currentlyHoveredLinks.clear();
     }
 
     public boolean isEdgeUnclicked(Edge edge) {
-        return edge.getFillColor() == this.edgeColorWhenNotSelected;
+        return edge.getFillColor() == this.linkColorWhenNotSelected;
     }
 
     private void addDots() {
-        for(int row=0; row<=this.numRows; row++) {
-            for(int col=0; col<=this.numColumns; col++) {
+        for(int row=0; row<=this.rows; row++) {
+            for(int col=0; col<=this.cols; col++) {
                 Dot dot = new Dot(row, col);
                 this.add(dot);
             }
@@ -140,23 +140,23 @@ public class BoardGUI extends GraphicsGroup {
     }
 
     private void addHorizontalEdges() {
-        for(int row=0; row<=this.numRows; row++) {
-            for(int col=0; col<this.numColumns; col++) {
+        for(int row=0; row<=this.rows; row++) {
+            for(int col=0; col<this.cols; col++) {
                 HorizontalEdge horizontalEdge = new HorizontalEdge(row, col);
                 this.add(horizontalEdge);
 
-                this.horizontalEdges[row][col] = horizontalEdge;
+                this.horizontalLinks[row][col] = horizontalEdge;
             }
         }
     }
 
     private void addVerticalEdges() {
-        for(int col=0; col<=this.numColumns; col++) {
-            for(int row=0; row<this.numRows; row++) {
+        for(int col=0; col<=this.cols; col++) {
+            for(int row=0; row<this.rows; row++) {
                 VerticalEdge verticalEdge = new VerticalEdge(row, col);
                 this.add(verticalEdge);
 
-                this.verticalEdges[row][col] = verticalEdge;
+                this.verticalLinks[row][col] = verticalEdge;
             }
         }
     }
@@ -200,22 +200,22 @@ public class BoardGUI extends GraphicsGroup {
         }
 
         public boolean isClicked() {
-            if(this.getColor() != edgeColorWhenNotSelected) {
+            if(this.getColor() != linkColorWhenNotSelected) {
                 return true;
             }
             return false;
         }
 
         public void setUnclickedColor() {
-            this.setColor(edgeColorWhenNotSelected);
+            this.setColor(linkColorWhenNotSelected);
         }
 
         public void hovered() {
-            this.setColor(edgeColorWhenHover);
+            this.setColor(linkColorWhenHover);
         }
 
         public boolean isHovered() {
-            return this.getFillColor() == edgeColorWhenHover;
+            return this.getFillColor() == linkColorWhenHover;
         }
 
         private void setColor(Color color) {
@@ -244,9 +244,9 @@ public class BoardGUI extends GraphicsGroup {
     class HorizontalEdge extends Edge {
         public HorizontalEdge(int row, int column) {
             super(column*boxSize + dotDiameter, 
-                  row*boxSize + dotDiameter/2 - edgeThickness/2, 
+                  row*boxSize + dotDiameter/2 - linkThickness/2, 
                   boxSize - dotDiameter, 
-                  edgeThickness);
+                  linkThickness);
             super.row0 = row;
             super.column0 = column;
             // super.row1 = row;
@@ -257,9 +257,9 @@ public class BoardGUI extends GraphicsGroup {
 
     class VerticalEdge extends Edge {
         public VerticalEdge(int row, int column) {
-            super(column*boxSize + dotDiameter/2 - edgeThickness/2, 
+            super(column*boxSize + dotDiameter/2 - linkThickness/2, 
                   row*boxSize + dotDiameter, 
-                  edgeThickness,
+                  linkThickness,
                   boxSize - dotDiameter);
             super.row0 = row;
             super.column0 = column;
