@@ -1,21 +1,21 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 public class BoardTest {
     // >>>>> SETUP <<<<<
-    private final int numRows = 2;
-    private final int numCols = 3;
-    private Board board = new Board(numRows, numCols);
+    private final int rows = 2;
+    private final int cols = 3;
+    private Board board = new Board(rows, cols);
 
     @Test
     public void addVerticalLineOutsideBoard() {
         // to right of board
-        assertThrows(IllegalArgumentException.class, () -> board.addVerticalLine(numCols+1, 0, "A"));
+        assertThrows(IllegalArgumentException.class, () -> board.addVerticalLine(cols+1, 0, "A"));
         
         // to left of board
         assertThrows(IllegalArgumentException.class, () -> board.addVerticalLine(-1, 0, "A"));
@@ -24,13 +24,13 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.addVerticalLine(-1, 2, "A"));
 
         // below board
-        assertThrows(IllegalArgumentException.class, () -> board.addVerticalLine(0, numRows+1, "A"));
+        assertThrows(IllegalArgumentException.class, () -> board.addVerticalLine(0, rows+1, "A"));
     }
 
     @Test
     public void addHorizontalLineOutsideBoard() {
         // to right of board
-        assertThrows(IllegalArgumentException.class, () -> board.addHorizontalLine(numCols, 0, "A"));
+        assertThrows(IllegalArgumentException.class, () -> board.addHorizontalLine(cols, 0, "A"));
         
         // to left of board
         assertThrows(IllegalArgumentException.class, () -> board.addHorizontalLine(-1, 0, "A"));
@@ -39,7 +39,7 @@ public class BoardTest {
         assertThrows(IllegalArgumentException.class, () -> board.addHorizontalLine(-1, 2, "A"));
 
         // below board
-        assertThrows(IllegalArgumentException.class, () -> board.addHorizontalLine(0, numRows+1, "A"));
+        assertThrows(IllegalArgumentException.class, () -> board.addHorizontalLine(0, rows+1, "A"));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class BoardTest {
 
     @Test
     public void makeBoxTopLeft() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         
         labelledBoxes = board.addHorizontalLine(0, 0, "A");
         assertEquals(labelledBoxes.size(), 0);
@@ -70,64 +70,64 @@ public class BoardTest {
         assertEquals(labelledBoxes.size(), 0);
 
         labelledBoxes = board.addVerticalLine(1, 0, "A");
-        assertEquals(1, labelledBoxes.size());
+        assertEquals(Set.of(new BoxPos(0, 0)), labelledBoxes);
     }
 
     @Test
     public void makeBoxBottomLeft() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         
-        labelledBoxes = board.addHorizontalLine(0, numRows-1, "A");
+        labelledBoxes = board.addHorizontalLine(0, rows-1, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addHorizontalLine(0, numRows, "A");
+        labelledBoxes = board.addHorizontalLine(0, rows, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addVerticalLine(0, numRows-1, "A");
+        labelledBoxes = board.addVerticalLine(0, rows-1, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addVerticalLine(1, numRows-1, "A");
-        assertEquals(1, labelledBoxes.size());
+        labelledBoxes = board.addVerticalLine(1, rows-1, "A");
+        assertEquals(Set.of(new BoxPos(0, rows-1)), labelledBoxes);
     }
 
     @Test
     public void makeBoxTopRight() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         
-        labelledBoxes = board.addHorizontalLine(numCols-1, 0, "A");
+        labelledBoxes = board.addHorizontalLine(cols-1, 0, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addHorizontalLine(numCols-1, 1, "A");
+        labelledBoxes = board.addHorizontalLine(cols-1, 1, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addVerticalLine(numCols-1, 0, "A");
+        labelledBoxes = board.addVerticalLine(cols-1, 0, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addVerticalLine(numCols, 0, "A");
-        assertEquals(1, labelledBoxes.size());
+        labelledBoxes = board.addVerticalLine(cols, 0, "A");
+        assertEquals(Set.of(new BoxPos(cols-1, 0)), labelledBoxes);
     }
 
 
     @Test
     public void makeBoxBottomRight() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         
-        labelledBoxes = board.addHorizontalLine(numCols-1, numRows-1, "A");
+        labelledBoxes = board.addHorizontalLine(cols-1, rows-1, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addHorizontalLine(numCols-1, numRows, "A");
+        labelledBoxes = board.addHorizontalLine(cols-1, rows, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addVerticalLine(numCols-1, numRows-1, "A");
+        labelledBoxes = board.addVerticalLine(cols-1, rows-1, "A");
         assertEquals(labelledBoxes.size(), 0);
 
-        labelledBoxes = board.addVerticalLine(numCols, numRows-1, "A");
-        assertEquals(1, labelledBoxes.size());
+        labelledBoxes = board.addVerticalLine(cols, rows-1, "A");
+        assertEquals(Set.of(new BoxPos(cols-1, rows-1)), labelledBoxes);
     }
 
     @Test
     public void makeTwoBoxesHorizontalTop() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
 
         labelledBoxes = board.addHorizontalLine(0, 0, "A");
         assertEquals(labelledBoxes.size(), 0);
@@ -148,12 +148,13 @@ public class BoardTest {
         assertEquals(labelledBoxes.size(), 0);
 
         labelledBoxes = board.addVerticalLine(1, 0, "A");
-        assertEquals(labelledBoxes.size(), 2);
+        assertEquals(Set.of(new BoxPos(0, 0), new BoxPos(1, 0)), labelledBoxes);
+        
     }
 
     @Test
     public void makeTwoBoxesHorizontalBottom() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
 
         labelledBoxes = board.addHorizontalLine(0, 1, "A");
         assertEquals(labelledBoxes.size(), 0);
@@ -174,13 +175,13 @@ public class BoardTest {
         assertEquals(labelledBoxes.size(), 0);
 
         labelledBoxes = board.addVerticalLine(1, 1, "A");
-        assertEquals(labelledBoxes.size(), 2);
+        assertEquals(Set.of(new BoxPos(0, 1), new BoxPos(1, 1)), labelledBoxes);
     }
 
 
     @Test
     public void makeTwoBoxesVerticalLeft() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         
         labelledBoxes = board.addHorizontalLine(0, 0, "A");
         assertEquals(labelledBoxes.size(), 0);
@@ -201,12 +202,12 @@ public class BoardTest {
         assertEquals(labelledBoxes.size(), 0);
         
         labelledBoxes = board.addHorizontalLine(0, 1, "A");
-        assertEquals(labelledBoxes.size(), 2);
+        assertEquals(Set.of(new BoxPos(0, 0), new BoxPos(0, 1)), labelledBoxes);
     }
 
     @Test
     public void makeTwoBoxesVerticalMiddle() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         
         labelledBoxes = board.addHorizontalLine(1, 0, "A");
         assertEquals(labelledBoxes.size(), 0);
@@ -227,12 +228,12 @@ public class BoardTest {
         assertEquals(labelledBoxes.size(), 0);
         
         labelledBoxes = board.addHorizontalLine(1, 1, "A");
-        assertEquals(labelledBoxes.size(), 2);
+        assertEquals(Set.of(new BoxPos(1, 0), new BoxPos(1, 1)), labelledBoxes);
     }
 
     @Test
     public void makeTwoBoxesVerticalRight() {
-        List<BoxPos> labelledBoxes = new LinkedList<>();
+        Set<BoxPos> labelledBoxes = new HashSet<>();
         
         labelledBoxes = board.addHorizontalLine(2, 0, "A");
         assertEquals(labelledBoxes.size(), 0);
@@ -253,6 +254,7 @@ public class BoardTest {
         assertEquals(labelledBoxes.size(), 0);
         
         labelledBoxes = board.addHorizontalLine(2, 1, "A");
-        assertEquals(labelledBoxes.size(), 2);
+        assertEquals(Set.of(new BoxPos(2, 0), new BoxPos(2, 1)), labelledBoxes);
+
     }
 }

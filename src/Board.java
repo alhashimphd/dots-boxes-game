@@ -1,5 +1,5 @@
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Board {
     private final String[][] boxesLabels;
@@ -14,14 +14,14 @@ public class Board {
     }
 
 
-    public List<BoxPos> addVerticalLine(int topXPos, int topYPos, String label) {
+    public Set<BoxPos> addVerticalLine(int topXPos, int topYPos, String label) {
         isPosValid(topXPos, topYPos, verticalLinesLabels);
         isLabelValid(label);
         canVerticalLineBeLabelled(topXPos, topYPos);
         
         verticalLinesLabels[topYPos][topXPos] = label;
 
-        List<BoxPos> completedBoxes = new LinkedList<>();
+        Set<BoxPos> completedBoxes = new HashSet<>();
         int boxTopLeftX;
 
         if(topXPos != verticalLinesLabels[0].length-1) {
@@ -42,14 +42,14 @@ public class Board {
     }
 
     
-    public List<BoxPos> addHorizontalLine(int leftXPos, int leftYPos, String label) {
+    public Set<BoxPos> addHorizontalLine(int leftXPos, int leftYPos, String label) {
         isPosValid(leftXPos, leftYPos, horizontalLinesLabels);
         isLabelValid(label);
         canHorizontalLineBeLabelled(leftXPos, leftYPos);
 
         horizontalLinesLabels[leftYPos][leftXPos] = label;
         
-        List<BoxPos> completedBoxes = new LinkedList<>();
+        Set<BoxPos> completedBoxes = new HashSet<>();
         int boxTopLeftY;
 
         if(leftYPos != 0) {
