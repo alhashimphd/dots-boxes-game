@@ -13,6 +13,14 @@ public class Board {
         horizontalLinesLabels = new String[rows+1][cols];
     }
 
+    public int getNumRows() {
+        return boxesLabels.length;
+    }
+
+    public int getNumCols() {
+        return boxesLabels[0].length;
+    }
+
 
     public Set<BoxPos> addVerticalLine(int topXPos, int topYPos, String label) {
         isPosValid(topXPos, topYPos, verticalLinesLabels);
